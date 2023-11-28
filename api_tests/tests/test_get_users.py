@@ -1,6 +1,3 @@
-"""API tests for GET-method for Users."""
-
-from pprint import pprint
 import pytest
 import random
 from api_tests.utils.get_users_method import SingleUser, ListUsers
@@ -9,7 +6,7 @@ from data.data import ExpectedResult
 
 
 class TestGetListUser:
-    """API tests for GET-method for list of users."""
+    """API тесты для списка пользователей."""
     response_keys = ExpectedResult.keys_list_users
     data_keys = ExpectedResult.data_keys
 
@@ -17,7 +14,6 @@ class TestGetListUser:
         """Проверка, что метод Get для получения списка пользователей возвращает статус-код 200"""
         page_number = random.randint(1, 100)
         result_get = ListUsers.get_list_of_users(page_number)
-        pprint(result_get.json())
         Assertion.check_status_code(result_get, 200)
 
     def test_get_list_of_users_return_json_response(self):
@@ -39,15 +35,24 @@ class TestGetListUser:
         result_get = ListUsers.get_list_of_users(page_number)
         Assertion.check_keys_of_json_response(result_get, key)
 
-    def test_get_list_of_users_has_correct_quantity_of_users(self):
+    def test_get_list_of_users_has_correct_quantity_of_users_on_page(self):
         """Проверка, что ответ на Get-запрос содержит правильное количество объектов на странице"""
         page_number = random.randint(1, 2)
         result_get = ListUsers.get_list_of_users(page_number)
         Assertion.check_number_of_objects_on_page(result_get)
 
+    def test_get_list_of_users_for_not_valid_page(self):
+        """Проверка, что ответ на Get-запрос для номера страницы больше, чем в 'total_pages' возвращает 0 объектов"""
+        get_pages = ListUsers.get_page_total_for_list_of_users()
+        pages_total = int(get_pages.json()["total_pages"])
+        exceeding_page = pages_total + random.randint(1, 100)
+        result_get = ListUsers.get_list_of_users(exceeding_page)
+        print(result_get.json())
+        Assertion.check_number_of_objects_on_not_valid_page(result_get)
+
 
 class TestGetSingleUser:
-    """API tests for GET-method for single user."""
+    """API тесты для одного пользователя."""
     response_keys = ["data", "support"]
     data_keys = ExpectedResult.data_keys
 

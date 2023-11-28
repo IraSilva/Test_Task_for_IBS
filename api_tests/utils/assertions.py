@@ -79,6 +79,19 @@ class Assertion:
         actual_quantity = len(list_objects)
         assert actual_quantity <= expected_quantity, f"Количество объектов на странице не соответствует заявленному."
 
+    @staticmethod
+    def check_number_of_objects_on_not_valid_page(result):
+        """Проверка, что количество объектов для невалидной страницы равно нулю."""
+        list_objects = result.json()["data"]
+        actual_quantity = len(list_objects)
+        assert actual_quantity == 0, f"Количество объектов на странице не нулевое."
+
+    @staticmethod
+    def check_keys_in_response(result, key):
+        """Проверка, что в ответе содержатся верные ключи"""
+        response = result.json()
+        assert key in response, f"в ответе нет ключа: '{key}'"
+
 
 
 
